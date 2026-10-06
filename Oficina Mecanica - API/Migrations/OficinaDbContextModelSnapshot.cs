@@ -32,23 +32,30 @@ namespace Oficina_Mecanica___API.Migrations
 
                     b.Property<string>("CPF")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Telefone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clientes");
+                    b.HasIndex("CPF")
+                        .IsUnique();
+
+                    b.ToTable("Clientes", (string)null);
                 });
 
             modelBuilder.Entity("Oficina_Mecanica___API.Models.OrdemServico", b =>
@@ -67,13 +74,16 @@ namespace Oficina_Mecanica___API.Migrations
 
                     b.Property<string>("DescricaoServico")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<decimal>("ValorTotal")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("VeiculoId")
@@ -83,7 +93,7 @@ namespace Oficina_Mecanica___API.Migrations
 
                     b.HasIndex("VeiculoId");
 
-                    b.ToTable("OrdensServico");
+                    b.ToTable("OrdensServico", (string)null);
                 });
 
             modelBuilder.Entity("Oficina_Mecanica___API.Models.Veiculo", b =>
@@ -102,21 +112,27 @@ namespace Oficina_Mecanica___API.Migrations
 
                     b.Property<string>("Marca")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Modelo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Placa")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
 
-                    b.ToTable("Veiculos");
+                    b.HasIndex("Placa")
+                        .IsUnique();
+
+                    b.ToTable("Veiculos", (string)null);
                 });
 
             modelBuilder.Entity("Oficina_Mecanica___API.Models.OrdemServico", b =>
@@ -124,7 +140,7 @@ namespace Oficina_Mecanica___API.Migrations
                     b.HasOne("Oficina_Mecanica___API.Models.Veiculo", "Veiculo")
                         .WithMany("OrdensServico")
                         .HasForeignKey("VeiculoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Veiculo");
@@ -135,7 +151,7 @@ namespace Oficina_Mecanica___API.Migrations
                     b.HasOne("Oficina_Mecanica___API.Models.Cliente", "Cliente")
                         .WithMany("Veiculos")
                         .HasForeignKey("ClienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Cliente");

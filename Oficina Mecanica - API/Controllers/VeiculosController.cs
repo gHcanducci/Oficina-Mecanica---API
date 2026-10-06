@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Oficina_Mecanica___API.Data;
 using Oficina_Mecanica___API.Models;
@@ -17,9 +17,26 @@ namespace Oficina_Mecanica___API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? marca, [FromQuery] int? clienteId, [FromQuery] string? placa)
         {
-            return Ok(await _context.Veiculos.ToListAsync());
+            var query = _context.Veiculos.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(marca))
+            {
+                var marcaBusca = marca.Trim();
+                query = query.Where(v => v.Marca == marcaBusca);
+            }
+
+            if (clienteId.HasValue)
+                query = query.Where(v => v.ClienteId == clienteId.Value);
+
+            if (!string.IsNullOrWhiteSpace(placa))
+            {
+                var placaBusca = placa.Trim().ToUpper();
+                query = query.Where(v => v.Placa == placaBusca);
+            }
+
+            return Ok(await query.ToListAsync());
         }
 
         [HttpGet("{id}")]
@@ -27,7 +44,7 @@ namespace Oficina_Mecanica___API.Controllers
         {
             var veiculo = await _context.Veiculos.FindAsync(id);
             if (veiculo == null)
-                return NotFound();
+                return NotFound("Veículo não encontrado.");
 
             return Ok(veiculo);
         }
@@ -39,6 +56,19 @@ namespace Oficina_Mecanica___API.Controllers
             if (!clienteExiste)
                 return BadRequest("Cliente informado não existe.");
 
+            if (veiculo.AnoFabricacao > DateTime.Now.Year + 1)
+                return BadRequest("O ano de fabricação não pode ser maior que o ano seguinte ao atual.");
+
+            veiculo.Placa = veiculo.Placa.ToUpper();
+
+            var placaJaExiste = await _context.Veiculos.AnyAsync(v => v.Placa == veiculo.Placa);
+            if (placaJaExiste)
+                return BadRequest("Já existe um veículo cadastrado com esta placa.");
+
+            veiculo.Id = 0;
+            veiculo.Modelo = veiculo.Modelo.Trim();
+            veiculo.Marca = veiculo.Marca.Trim();
+
             _context.Veiculos.Add(veiculo);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = veiculo.Id }, veiculo);
@@ -49,11 +79,25 @@ namespace Oficina_Mecanica___API.Controllers
         {
             var veiculo = await _context.Veiculos.FindAsync(id);
             if (veiculo == null)
-                return NotFound();
+                return NotFound("Veículo não encontrado.");
 
-            veiculo.Placa = veiculoAtualizado.Placa;
-            veiculo.Modelo = veiculoAtualizado.Modelo;
-            veiculo.Marca = veiculoAtualizado.Marca;
+            var clienteExiste = await _context.Clientes.AnyAsync(c => c.Id == veiculoAtualizado.ClienteId);
+            if (!clienteExiste)
+                return BadRequest("Cliente informado não existe.");
+
+            if (veiculoAtualizado.AnoFabricacao > DateTime.Now.Year + 1)
+                return BadRequest("O ano de fabricação não pode ser maior que o ano seguinte ao atual.");
+
+            var placa = veiculoAtualizado.Placa.ToUpper();
+
+            var placaJaExiste = await _context.Veiculos.AnyAsync(v => v.Placa == placa && v.Id != id);
+            if (placaJaExiste)
+                return BadRequest("Já existe outro veículo cadastrado com esta placa.");
+
+            veiculo.ClienteId = veiculoAtualizado.ClienteId;
+            veiculo.Placa = placa;
+            veiculo.Modelo = veiculoAtualizado.Modelo.Trim();
+            veiculo.Marca = veiculoAtualizado.Marca.Trim();
             veiculo.AnoFabricacao = veiculoAtualizado.AnoFabricacao;
 
             await _context.SaveChangesAsync();
@@ -65,7 +109,11 @@ namespace Oficina_Mecanica___API.Controllers
         {
             var veiculo = await _context.Veiculos.FindAsync(id);
             if (veiculo == null)
-                return NotFound();
+                return NotFound("Veículo não encontrado.");
+
+            var possuiOrdens = await _context.OrdensServico.AnyAsync(o => o.VeiculoId == id);
+            if (possuiOrdens)
+                return BadRequest("Não é possível excluir um veículo que possui ordens de serviço.");
 
             _context.Veiculos.Remove(veiculo);
             await _context.SaveChangesAsync();
@@ -77,7 +125,7 @@ namespace Oficina_Mecanica___API.Controllers
         {
             var veiculoExiste = await _context.Veiculos.AnyAsync(v => v.Id == id);
             if (!veiculoExiste)
-                return NotFound();
+                return NotFound("Veículo não encontrado.");
 
             var ordens = await _context.OrdensServico
                 .Where(o => o.VeiculoId == id)
