@@ -4,10 +4,8 @@
 
 namespace Oficina_Mecanica___API.Migrations
 {
-    /// <inheritdoc />
     public partial class Checkpoint02 : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
@@ -128,7 +126,6 @@ namespace Oficina_Mecanica___API.Migrations
                 onDelete: ReferentialAction.Restrict);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(

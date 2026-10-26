@@ -8,7 +8,6 @@ namespace Oficina_Mecanica___API.Models
 
         public static readonly string[] Todos = { Aberta, EmAndamento, Concluida };
 
-        // Devolve o status com a grafia padrão ou null quando o valor não é um status válido
         public static string? Normalizar(string? status)
         {
             if (string.IsNullOrWhiteSpace(status))

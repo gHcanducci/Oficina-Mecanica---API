@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Oficina_Mecanica___API.DTOs
 {
-    // Usado no POST e no PUT de usuários; no PUT a senha é opcional (vazia mantém a atual)
     public class UsuarioRequest
     {
         [Required(ErrorMessage = "O nome é obrigatório.")]

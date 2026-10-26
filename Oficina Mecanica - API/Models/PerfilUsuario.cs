@@ -7,7 +7,6 @@ namespace Oficina_Mecanica___API.Models
 
         public static readonly string[] Todos = { Administrador, Atendente };
 
-        // Devolve o perfil com a grafia padrão ou null quando o valor não é um perfil válido
         public static string? Normalizar(string? perfil)
         {
             if (string.IsNullOrWhiteSpace(perfil))

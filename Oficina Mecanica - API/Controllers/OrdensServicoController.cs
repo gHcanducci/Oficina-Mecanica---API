@@ -50,7 +50,6 @@ namespace Oficina_Mecanica___API.Controllers
 
             if (dataFinal.HasValue)
             {
-                // Inclui o dia final inteiro
                 var fim = dataFinal.Value.Date.AddDays(1);
                 query = query.Where(o => o.DataAbertura < fim);
             }
@@ -75,7 +74,6 @@ namespace Oficina_Mecanica___API.Controllers
             if (!veiculoExiste)
                 return BadRequest("Veículo informado não existe.");
 
-            // Toda ordem de serviço nasce aberta; o status só muda pelo PUT
             ordem.Id = 0;
             ordem.DataAbertura = DateTime.Now;
             ordem.DataConclusao = null;

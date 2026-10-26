@@ -21,7 +21,6 @@ namespace Oficina_Mecanica___API.Services
             var credenciais = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
             var expiracao = DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("Jwt:ExpiracaoMinutos"));
 
-            // Informações do usuário que vão dentro do token; a Role é usada pelo [Authorize(Roles = ...)]
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),

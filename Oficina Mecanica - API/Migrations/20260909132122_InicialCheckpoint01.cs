@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Oficina_Mecanica___API.Migrations
 {
-    /// <inheritdoc />
     public partial class InicialCheckpoint01 : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -85,7 +83,6 @@ namespace Oficina_Mecanica___API.Migrations
                 column: "ClienteId");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

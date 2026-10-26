@@ -4,10 +4,8 @@
 
 namespace Oficina_Mecanica___API.Migrations
 {
-    /// <inheritdoc />
     public partial class Checkpoint03 : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -33,7 +31,6 @@ namespace Oficina_Mecanica___API.Migrations
                 unique: true);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

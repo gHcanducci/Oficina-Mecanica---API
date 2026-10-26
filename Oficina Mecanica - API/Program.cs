@@ -10,15 +10,12 @@ using Oficina_Mecanica___API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddDbContext<OficinaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
 
-// Autenticação JWT: todo token recebido tem assinatura, emissor, audiência e expiração validados
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -34,7 +31,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
 
-        // Mensagens em português para 401 (sem token ou token inválido) e 403 (perfil sem permissão)
         options.Events = new JwtBearerEvents
         {
             OnChallenge = async context =>
@@ -59,11 +55,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    // Botão Authorize no Swagger para enviar o token nas requisições
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -88,7 +82,6 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Cria o administrador inicial quando ainda não existe nenhum usuário, para permitir o primeiro login
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<OficinaDbContext>();
@@ -109,7 +102,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

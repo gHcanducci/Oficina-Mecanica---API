@@ -100,7 +100,6 @@ namespace Oficina_Mecanica___API.Controllers
             if (emailJaExiste)
                 return BadRequest("Já existe outro usuário cadastrado com este e-mail.");
 
-            // O sistema não pode ficar sem nenhum administrador
             if (usuario.Perfil == PerfilUsuario.Administrador && perfil != PerfilUsuario.Administrador)
             {
                 var outrosAdministradores = await _context.Usuarios
@@ -113,7 +112,6 @@ namespace Oficina_Mecanica___API.Controllers
             usuario.Email = email;
             usuario.Perfil = perfil;
 
-            // Senha vazia no PUT mantém a senha atual
             if (!string.IsNullOrWhiteSpace(request.Senha))
                 usuario.SenhaHash = _passwordHasher.HashPassword(usuario, request.Senha);
 

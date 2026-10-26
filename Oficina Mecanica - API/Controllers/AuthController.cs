@@ -32,7 +32,6 @@ namespace Oficina_Mecanica___API.Controllers
             var email = login.Email.Trim().ToLower();
             var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
 
-            // Mesma mensagem para e-mail inexistente e senha errada, para não revelar quais e-mails existem
             if (usuario == null)
                 return Unauthorized("E-mail ou senha inválidos.");
 
@@ -54,7 +53,6 @@ namespace Oficina_Mecanica___API.Controllers
         [Authorize]
         public async Task<IActionResult> Me()
         {
-            // O id vem do próprio token, na claim NameIdentifier
             var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
             var usuario = await _context.Usuarios.FindAsync(id);
