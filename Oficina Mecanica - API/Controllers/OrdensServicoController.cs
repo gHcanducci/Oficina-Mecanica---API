@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Oficina_Mecanica___API.Data;
@@ -7,6 +8,7 @@ namespace Oficina_Mecanica___API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class OrdensServicoController : ControllerBase
     {
         private readonly Data.OficinaDbContext _context;
@@ -124,6 +126,7 @@ namespace Oficina_Mecanica___API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = PerfilUsuario.Administrador)]
         public async Task<IActionResult> Delete(int id)
         {
             var ordem = await _context.OrdensServico.FindAsync(id);

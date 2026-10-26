@@ -14,6 +14,7 @@ namespace Oficina_Mecanica___API.Data
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<OrdemServico> OrdensServico { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,6 +61,19 @@ namespace Oficina_Mecanica___API.Data
                     .WithMany(v => v.OrdensServico)
                     .HasForeignKey(o => o.VeiculoId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Usuario>(entity =>
+            {
+                entity.ToTable("Usuarios");
+                entity.HasKey(u => u.Id);
+
+                entity.Property(u => u.Nome).IsRequired().HasMaxLength(100);
+                entity.Property(u => u.Email).IsRequired().HasMaxLength(100);
+                entity.Property(u => u.SenhaHash).IsRequired().HasMaxLength(200);
+                entity.Property(u => u.Perfil).IsRequired().HasMaxLength(20);
+
+                entity.HasIndex(u => u.Email).IsUnique();
             });
         }
     }

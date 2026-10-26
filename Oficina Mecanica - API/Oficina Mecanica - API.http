@@ -1,6 +1,11 @@
 @Oficina_Mecanica___API_HostAddress = http://localhost:5223
 
-GET {{Oficina_Mecanica___API_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{Oficina_Mecanica___API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@oficina.com",
+  "senha": "Admin@123"
+}
 
 ###
